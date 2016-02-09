@@ -376,3 +376,48 @@ check_latexmk_version <- function(latexmk_path = find_program('latexmk')) {
     call. = FALSE
   )
 }
+
+read_file <- function(path) {
+  readChar(path, file.info(path)$size, TRUE)
+}
+
+
+stopf <- function(...) {
+  stop(sprintf(...), call. = FALSE)
+}
+
+warnf <- function(...) {
+  warning(sprintf(...), call. = FALSE)
+}
+
+expr_to_list <- function(expr, envir = parent.frame()) {
+  expr <- substitute(expr)
+  output <- list()
+  for (i in seq_along(expr)) {
+    object <- expr[[i]]
+    if (is.call(object) && (object[[1]] == '<-' || object[[1]] == '='))
+      output[[as.character(object[[2]])]] <- eval(object[[3]], envir = envir)
+  }
+  output
+}
+
+regex_matches <- function(pattern, x) {
+  matches <- gregexpr(pattern, x, perl = TRUE)[[1]]
+  starts <- attr(matches, "capture.start")
+  ends <- starts + attr(matches, "capture.length") - 1
+  substring(x, starts, ends)
+}
+
+starts_with <- function(string, prefix) {
+  nchar(string) >= nchar(prefix) &&
+    substring(string, 1, nchar(prefix)) == prefix
+}
+
+ends_with <- function(string, suffix) {
+  nchar(string) >= nchar(suffix) &&
+    substring(string, nchar(string) - nchar(suffix) + 1) == suffix
+}
+
+trim <- function(string) {
+  sub("^\\s*", "", sub("\\s*$", "", string, perl = TRUE), perl = TRUE)
+}
