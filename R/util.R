@@ -421,3 +421,4 @@ ends_with <- function(string, suffix) {
 trim <- function(string) {
   sub("^\\s*", "", sub("\\s*$", "", string, perl = TRUE), perl = TRUE)
 }
+

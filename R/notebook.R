@@ -192,6 +192,13 @@ rnb_prepare <- function(rnbData) {
 
   builder$append('<html>')
 
+  # add document comments within an HTML comment
+  builder$append(
+    '<!-- document-source',
+    caTools::base64encode(paste(contents, collapse = "\n")),
+    '-->'
+  )
+
   # write header output
   builder$append('<head>')
   builder$indent()
@@ -236,4 +243,10 @@ inject_base64_data <- function(html, chunkId, rnbData) {
 
   result <- read_file(output)
   extract_body(result)
+}
+
+extract_rmd <- function(rnbDoc) {
+  startIdx <- which(rnbDoc == '<!-- document-source')
+  base64doc <- rnbDoc[startIdx + 1]
+  strsplit(caTools::base64decode(base64doc, character()), "\n", fixed = TRUE)[[1]]
 }

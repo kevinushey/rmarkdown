@@ -16,4 +16,9 @@ test_that("we can round-trip through reading, writing a notebook", {
   rnbDoc <- rnb_prepare(rnbData)
   cat(rnbDoc, file = output, sep = "\n")
 
+  rnbContents <- readLines(output)
+  src <- extract_rmd(rnbContents)
+
+  expect_equal(rnbData$contents, src)
+
 })
